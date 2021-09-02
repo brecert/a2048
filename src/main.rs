@@ -5,7 +5,6 @@ use std::hash::{Hash, Hasher};
 use std::io;
 use std::process::exit;
 
-use termion;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
