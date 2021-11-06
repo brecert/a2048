@@ -1,5 +1,5 @@
 #![allow(incomplete_features)]
-#![feature(const_generics)]
+#![feature(adt_const_params)]
 use std::cmp::Ordering;
 
 pub mod game;
