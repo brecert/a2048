@@ -11,16 +11,19 @@ pub struct Game {
     pub rng: StdRng,
     pub grid: Grid<usize>,
     pub points: usize,
+    pub new_points: usize,
 }
 
 macro_rules! shift_fn {
     ($name:ident, $axis:ident, $placement:path) => {
         pub fn $name(&mut self) {
+            self.new_points = 0;
             paste::paste! {
                 for i in 0..self.grid.[<$axis s>]() {
                     let axis: Vec<_> = self.grid.[<iter_ $axis>](i).map(|v| *v).collect();
                     let (merged, points) = merge_2048::<{ $placement }>(&axis);
                     self.points += points;
+                    self.new_points += points;
                     self.grid.[<replace_ $axis>](i, merged);
                 }
             }
@@ -34,8 +37,9 @@ impl Game {
             rng: seed
                 .map(SeedableRng::seed_from_u64)
                 .unwrap_or_else(|| rand::SeedableRng::seed_from_u64(rand::random())),
-            points: 0,
             grid: Grid::new(height, width),
+            points: 0,
+            new_points: 0,
         }
     }
 

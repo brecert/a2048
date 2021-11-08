@@ -1,0 +1,7 @@
+:reproducible:
+:author: bree
+:keywords: rust, 2048, cli
+:description: an implementation of 2048 in rust. made for the cli.
+
+== a2048
+{description}

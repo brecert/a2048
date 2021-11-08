@@ -23,7 +23,11 @@ impl<T: Hash> Hashed for T {
 }
 
 fn print_game(game: &Game) {
-    println!("score: {}", game.points);
+    print!("score: {}", game.points);
+    if game.new_points > 0 {
+        print!(" (+{})", game.new_points)
+    }
+    print!("\n");
 
     let grid = &game.grid;
     let pad = grid.iter().max().unwrap().to_string().len();
