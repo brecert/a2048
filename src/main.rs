@@ -67,7 +67,7 @@ fn main() -> io::Result<()> {
     execute!(
         io::stdout(),
         crossterm::cursor::Hide,
-        crossterm::cursor::MoveTo(1, 1),
+        crossterm::cursor::MoveTo(0, 0),
         terminal::Clear(terminal::ClearType::FromCursorDown)
     )?;
 
@@ -109,7 +109,7 @@ fn main() -> io::Result<()> {
         disable_raw_mode()?;
         execute!(
             io::stdout(),
-            crossterm::cursor::MoveTo(1, 1),
+            crossterm::cursor::MoveTo(0, 0),
             terminal::Clear(terminal::ClearType::FromCursorDown)
         )?;
         print_game(&game);
