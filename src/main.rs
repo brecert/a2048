@@ -9,6 +9,8 @@ use std::process::exit;
 
 use a2048::game::Game;
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 trait Hashed {
     fn hashed(&self) -> u64;
 }
@@ -54,10 +56,19 @@ struct A2048 {
     /// the height in rows of the game
     #[argh(option, default = "4")]
     height: usize,
+
+    /// display current version
+    #[argh(switch)]
+    version: bool,
 }
 
 fn main() -> io::Result<()> {
     let args: A2048 = argh::from_env();
+
+    if args.version {
+        println!("{VERSION}");
+        exit(0)
+    }
 
     // let mut game = args.seed.map_or_else(Game::default, Game::from_seed);
     let mut game = Game::new(args.width, args.height, args.seed);
