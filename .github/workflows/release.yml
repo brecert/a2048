@@ -24,37 +24,37 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            artifact_name: target/x86_64-unknown-linux-musl/release/mc-utils
+            artifact_name: target/x86_64-unknown-linux-musl/release/a2048
             release_name: linux-x86_64
             cross: true
             strip: true
           - os: ubuntu-latest
             target: aarch64-unknown-linux-musl
-            artifact_name: target/aarch64-unknown-linux-musl/release/mc-utils
+            artifact_name: target/aarch64-unknown-linux-musl/release/a2048
             release_name: linux-aarch64
             cross: true
             strip: false
           - os: ubuntu-latest
             target: armv7-unknown-linux-musleabihf
-            artifact_name: target/armv7-unknown-linux-musleabihf/release/mc-utils
+            artifact_name: target/armv7-unknown-linux-musleabihf/release/a2048
             release_name: linux-armv7
             cross: true
             strip: false
           - os: ubuntu-latest
             target: arm-unknown-linux-musleabihf
-            artifact_name: target/arm-unknown-linux-musleabihf/release/mc-utils
+            artifact_name: target/arm-unknown-linux-musleabihf/release/a2048
             release_name: linux-arm
             cross: true
             strip: false
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: target/x86_64-pc-windows-msvc/release/mc-utils.exe
+            artifact_name: target/x86_64-pc-windows-msvc/release/a2048.exe
             release_name: windows-x86_64.exe
             cross: false
             strip: true
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: target/x86_64-apple-darwin/release/mc-utils
+            artifact_name: target/x86_64-apple-darwin/release/a2048
             release_name: macos-x86_64
             cross: false
             strip: true
@@ -94,5 +94,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ matrix.artifact_name }}
           tag: ${{ github.ref }}
-          asset_name: mc-utils-$tag-${{ matrix.release_name }}
+          asset_name: a2048-$tag-${{ matrix.release_name }}
           body: ${{ steps.changelog_reader.outputs.log_entry }}
