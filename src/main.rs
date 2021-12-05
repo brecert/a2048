@@ -1,12 +1,11 @@
 use argh::FromArgs;
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use crossterm::{execute, terminal};
 
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::io;
 use std::process::exit;
-
-use termion::input::TermRead;
-use termion::raw::IntoRawMode;
 
 use a2048::game::Game;
 
@@ -65,35 +64,40 @@ fn main() -> io::Result<()> {
     game.add_random_tile();
     game.add_random_tile();
 
-    print!(
-        "{}{}{}",
-        termion::cursor::Hide,
-        termion::cursor::Goto(1, 1),
-        termion::clear::AfterCursor
-    );
+    execute!(
+        io::stdout(),
+        crossterm::cursor::Hide,
+        crossterm::cursor::MoveTo(1, 1),
+        terminal::Clear(terminal::ClearType::FromCursorDown)
+    )?;
+
+    fn quit_game() -> crossterm::Result<()> {
+        disable_raw_mode()?;
+        execute!(io::stdout(), crossterm::cursor::Show)?;
+        exit(0)
+    }
 
     print_game(&game);
 
-    let stdout = io::stdout().into_raw_mode()?;
-    let stdin = io::stdin().keys();
+    loop {
+        enable_raw_mode()?;
 
-    for key in stdin {
         let before = game.hashed();
 
         {
-            use termion::event::Key;
-            match key? {
-                Key::Up => game.shift_top(),
-                Key::Down => game.shift_bottom(),
-                Key::Left => game.shift_left(),
-                Key::Right => game.shift_right(),
-                Key::Ctrl('c') | Key::Char('q') | Key::Esc => {
-                    stdout.suspend_raw_mode()?;
-                    print!("{}", termion::cursor::Show);
-                    exit(0)
-                }
+            use crossterm::event::{self, Event, KeyCode as Key, KeyModifiers};
+            match event::read()? {
+                Event::Key(key) => match key.code {
+                    Key::Up => game.shift_top(),
+                    Key::Down => game.shift_bottom(),
+                    Key::Left => game.shift_left(),
+                    Key::Right => game.shift_right(),
+                    Key::Char('q') | Key::Esc => quit_game()?,
+                    Key::Char('c') if key.modifiers == KeyModifiers::CONTROL => quit_game()?,
+                    _ => (),
+                },
                 _ => (),
-            };
+            }
         }
 
         if before == game.hashed() {
@@ -102,22 +106,19 @@ fn main() -> io::Result<()> {
 
         game.add_random_tile();
 
-        stdout.suspend_raw_mode()?;
-        print!(
-            "{}{}",
-            termion::cursor::Goto(1, 1),
-            termion::clear::AfterCursor
-        );
+        disable_raw_mode()?;
+        execute!(
+            io::stdout(),
+            crossterm::cursor::MoveTo(1, 1),
+            terminal::Clear(terminal::ClearType::FromCursorDown)
+        )?;
         print_game(&game);
 
         if game.is_game_over() {
             println!("GAME OVER!");
-            print!("{}", termion::cursor::Show);
-            exit(0)
+            quit_game()?;
         }
 
-        stdout.activate_raw_mode()?;
+        enable_raw_mode()?;
     }
-
-    Ok(())
 }
